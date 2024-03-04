@@ -1,0 +1,112 @@
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <iomanip>
+
+using namespace std;
+
+class ItemTracker {
+private:
+    map<string, int> frequencyMap;
+
+public:
+    void readInputFile() {
+        ifstream inputFile("CS210_Project_Three_Input_File.txt");
+        string item;
+
+        if (inputFile.is_open()) {
+            while (inputFile >> item) {
+                frequencyMap[item]++;
+            }
+
+            inputFile.close();
+        }
+        else {
+            cout << "Error opening input file." << endl;
+        }
+    }
+
+    void saveFrequencyData() {
+        ofstream outputFile("frequency.dat");
+
+        if (outputFile.is_open()) {
+            for (const auto& pair : frequencyMap) {
+                outputFile << pair.first << " " << pair.second << endl;
+            }
+
+            outputFile.close();
+            cout << "Frequency data saved to 'frequency.dat'." << endl;
+        }
+        else {
+            cout << "Error opening output file." << endl;
+        }
+    }
+
+    int getItemFrequency(const string& item) {
+        return frequencyMap[item];
+    }
+
+    void printFrequencyList() {
+        for (const auto& pair : frequencyMap) {
+            cout << pair.first << " - " << pair.second << " times" << endl;
+        }
+    }
+
+    void printHistogram() {
+        for (const auto& pair : frequencyMap) {
+            cout << pair.first << " ";
+            for (int i = 0; i < pair.second; i++) {
+                cout << "*";
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    ItemTracker tracker;
+    tracker.readInputFile();
+
+    int option;
+    string searchItem;
+
+    do {
+        cout << "Menu Options:" << endl;
+        cout << "1. Search for an item and get its frequency" << endl;
+        cout << "2. Print the frequency list of all items" << endl;
+        cout << "3. Print a histogram of the frequency of all items" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your option (1-4): ";
+        cin >> option;
+
+        switch (option) {
+        case 1:
+            cout << "Enter the item you wish to search for: ";
+            cin.ignore();
+            getline(cin, searchItem);
+            cout << "Frequency of " << searchItem << ": " << tracker.getItemFrequency(searchItem) << endl;
+            break;
+
+        case 2:
+            tracker.printFrequencyList();
+            break;
+
+        case 3:
+            tracker.printHistogram();
+            break;
+
+        case 4:
+            tracker.saveFrequencyData();
+            cout << "Exiting the program. Goodbye!" << endl;
+            break;
+
+        default:
+            cout << "Invalid option. Please try again." << endl;
+            break;
+        }
+
+        cout << endl;
+    } while (option != 4);
+
+    return 0;
+}
